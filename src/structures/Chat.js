@@ -174,13 +174,25 @@ class Chat extends Base {
         return this.client.markChatUnread(this.id._serialized);
     }
 
+    // /**
+    //  * Loads chat messages, sorted from earliest to latest.
+    //  * @param {Object} searchOptions Options for searching messages. Right now only limit and fromMe is supported.
+    //  * @param {Number} [searchOptions.limit] The amount of messages to return. If no limit is specified, the available messages will be returned. Note that the actual number of returned messages may be smaller if there aren't enough messages in the conversation. Set this to Infinity to load all messages.
+    //  * @param {Boolean} [searchOptions.fromMe] Return only messages from the bot number or vise versa. To get all messages, leave the option undefined.
+    //  * @returns {Promise<Array<Message>>}
+    //  */
+
+
     /**
-     * Loads chat messages, sorted from earliest to latest.
-     * @param {Object} searchOptions Options for searching messages. Right now only limit and fromMe is supported.
-     * @param {Number} [searchOptions.limit] The amount of messages to return. If no limit is specified, the available messages will be returned. Note that the actual number of returned messages may be smaller if there aren't enough messages in the conversation. Set this to Infinity to load all messages.
-     * @param {Boolean} [searchOptions.fromMe] Return only messages from the bot number or vise versa. To get all messages, leave the option undefined.
-     * @returns {Promise<Array<Message>>}
-     */
+* Loads chat messages, sorted from earliest to latest.
+* @param {Object} client WhatsApp Web client instance
+* @param {string} chatId ID of the chat to fetch messages from
+* @param {Object} searchOptions Options for searching messages
+* @param {Number} [searchOptions.limit] Maximum number of messages to return. Returns all available if not specified. Set to Infinity for all messages.
+* @param {Boolean} [searchOptions.fromMe] Filter messages by sender. True for bot messages, false for others. Undefined returns all.
+* @returns {Promise<Array<Message>>} Array of Message objects
+*/
+    
     // async fetchMessages(searchOptions) {
     //     let messages = await this.client.pupPage.evaluate(async (chatId, searchOptions) => {
     //         const msgFilter = (m) => {
