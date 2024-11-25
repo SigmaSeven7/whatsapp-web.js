@@ -181,40 +181,76 @@ class Chat extends Base {
      * @param {Boolean} [searchOptions.fromMe] Return only messages from the bot number or vise versa. To get all messages, leave the option undefined.
      * @returns {Promise<Array<Message>>}
      */
-    async fetchMessages(searchOptions) {
-        let messages = await this.client.pupPage.evaluate(async (chatId, searchOptions) => {
-            const msgFilter = (m) => {
-                if (m.isNotification) {
-                    return false; // dont include notification messages
-                }
-                if (searchOptions && searchOptions.fromMe !== undefined && m.id.fromMe !== searchOptions.fromMe) {
-                    return false;
-                }
-                return true;
-            };
+    // async fetchMessages(searchOptions) {
+    //     let messages = await this.client.pupPage.evaluate(async (chatId, searchOptions) => {
+    //         const msgFilter = (m) => {
+    //             if (m.isNotification) {
+    //                 return false; // dont include notification messages
+    //             }
+    //             if (searchOptions && searchOptions.fromMe !== undefined && m.id.fromMe !== searchOptions.fromMe) {
+    //                 return false;
+    //             }
+    //             return true;
+    //         };
 
-            const chat = window.Store.Chat.get(chatId);
-            let msgs = chat.msgs.getModelsArray().filter(msgFilter);
+    //         const chat = window.Store.Chat.get(chatId);
+    //         let msgs = chat.msgs.getModelsArray().filter(msgFilter);
 
-            if (searchOptions && searchOptions.limit > 0) {
-                while (msgs.length < searchOptions.limit) {
-                    const loadedMessages = await window.Store.ConversationMsgs.loadEarlierMsgs(chat);
-                    if (!loadedMessages || !loadedMessages.length) break;
-                    msgs = [...loadedMessages.filter(msgFilter), ...msgs];
-                }
+    //         if (searchOptions && searchOptions.limit > 0) {
+    //             while (msgs.length < searchOptions.limit) {
+    //                 const loadedMessages = await window.Store.ConversationMsgs.loadEarlierMsgs(chat);
+    //                 if (!loadedMessages || !loadedMessages.length) break;
+    //                 msgs = [...loadedMessages.filter(msgFilter), ...msgs];
+    //             }
                 
-                if (msgs.length > searchOptions.limit) {
-                    msgs.sort((a, b) => (a.t > b.t) ? 1 : -1);
-                    msgs = msgs.splice(msgs.length - searchOptions.limit);
-                }
+    //             if (msgs.length > searchOptions.limit) {
+    //                 msgs.sort((a, b) => (a.t > b.t) ? 1 : -1);
+    //                 msgs = msgs.splice(msgs.length - searchOptions.limit);
+    //             }
+    //         }
+
+    //         return msgs.map(m => window.WWebJS.getMessageModel(m));
+
+    //     }, this.id._serialized, searchOptions);
+
+    //     return messages.map(m => new Message(this.client, m));
+    // }
+
+
+
+    async fetchMessages(client, chatId, searchOptions) {
+        let messages = await client.pupPage.evaluate(async (chatId, searchOptions) => {
+          const msgFilter = (m) => {
+            if (m.isNotification) {
+              return false;
             }
-
-            return msgs.map(m => window.WWebJS.getMessageModel(m));
-
-        }, this.id._serialized, searchOptions);
-
-        return messages.map(m => new Message(this.client, m));
-    }
+            if (searchOptions && searchOptions.fromMe !== undefined && m.id.fromMe !== searchOptions.fromMe) {
+              return false;
+            }
+            return true;
+          };
+      
+          const chat = window.Store.Chat.get(chatId);
+          let msgs = chat.msgs.getModelsArray().filter(msgFilter);
+      
+          if (searchOptions && searchOptions.limit > 0) {
+            while (msgs.length < searchOptions.limit) {
+              const loadedMessages = await window.Store.ConversationMsgs.loadEarlierMsgs(chat);
+              if (!loadedMessages || !loadedMessages.length) break;
+              msgs = [...loadedMessages.filter(msgFilter), ...msgs];
+            }
+      
+            if (msgs.length > searchOptions.limit) {
+              msgs.sort((a, b) => (a.t > b.t) ? 1 : -1);
+              msgs = msgs.splice(msgs.length - searchOptions.limit);
+            }
+          }
+      
+          return msgs.map(m => window.WWebJS.getMessageModel(m));
+        }, chatId, searchOptions);
+      
+        return messages.map(m => new Message(client, m));
+      }
 
     /**
      * Simulate typing in chat. This will last for 25 seconds.
