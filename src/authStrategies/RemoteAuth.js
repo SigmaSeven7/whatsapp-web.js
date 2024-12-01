@@ -22,6 +22,9 @@ const BaseAuthStrategy = require('./BaseAuthStrategy');
  * @param {string} options.clientId - Client id to distinguish instances if you are using multiple, otherwise keep null if you are using only one instance
  * @param {string} options.dataPath - Change the default path for saving session files, default is: "./.wwebjs_auth/" 
  * @param {number} options.backupSyncIntervalMs - Sets the time interval for periodic session backups. Accepts values starting from 60000ms {1 minute}
+ *  * Updates the store instance and reinitializes the session
+ * @param {object} store - New store instance to use for session management
+ * @returns {Promise<void>}
  */
 class RemoteAuth extends BaseAuthStrategy {
     constructor({ clientId, dataPath, store, backupSyncIntervalMs } = {}) {
