@@ -45,6 +45,13 @@ class RemoteAuth extends BaseAuthStrategy {
         this.requiredDirs = ['Default', 'IndexedDB', 'Local Storage']; /* => Required Files & Dirs in WWebJS to restore session */
     }
 
+
+    async updateStore(store) {
+        this.store = store;
+        // await this.extractRemoteSession();
+        // await this.afterAuthReady();
+    }
+
     async beforeBrowserInitialized() {
         const puppeteerOpts = this.client.options.puppeteer;
         const sessionDirName = this.clientId ? `RemoteAuth-${this.clientId}` : 'RemoteAuth';
