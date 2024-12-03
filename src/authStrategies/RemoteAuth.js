@@ -35,7 +35,7 @@ class RemoteAuth extends BaseAuthStrategy {
         if (clientId && !idRegex.test(clientId)) {
             throw new Error('Invalid clientId. Only alphanumeric characters, underscores and hyphens are allowed.');
         }
-        if (!backupSyncIntervalMs || backupSyncIntervalMs < 60000) {
+        if (!backupSyncIntervalMs || backupSyncIntervalMs < 30000) {
             throw new Error('Invalid backupSyncIntervalMs. Accepts values starting from 60000ms {1 minute}.');
         }
         if(!store) throw new Error('Remote database store is required.');
