@@ -94,7 +94,7 @@ class RemoteAuth extends BaseAuthStrategy {
     async afterAuthReady() {
         const sessionExists = await this.store.sessionExists({session: this.sessionName});
         if(!sessionExists) {
-            await this.delay(60000); /* Initial delay sync required for session to be stable enough to recover */
+            await this.delay(10000); /* Initial delay sync required for session to be stable enough to recover */
             await this.storeRemoteSession({emit: true});
         }
         var self = this;
